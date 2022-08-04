@@ -45,7 +45,7 @@ RUN cd /opt/phonetisaurus && \
 
 # install pronunciation_generation package,
 # which utilizes pronunciation addons
-RUN if [ "$build_pg" = "true" ]; then \
+RUN --mount=type=ssh if [ "$build_pg" = "true" ]; then \
     echo "Building pronunciation_generation from sources" && \
     cd /opt/ && \
     git clone git@github.com:balacoon/pronunciation_generation && \
