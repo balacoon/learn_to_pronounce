@@ -1,0 +1,3 @@
+[submodule "resources/en_us_pronunciation"]
+	path = resources/en_us_pronunciation
+	url = git@github.com:balacoon/en_us_pronunciation.git
