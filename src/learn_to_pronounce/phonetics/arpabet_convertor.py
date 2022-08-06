@@ -19,6 +19,7 @@ class ARPAbetConvertor:
     One modification to IPA/XSAMPA notation: stress marks are put just before vowel, not before syllable.
     That helps to treat stressed/unstressed vowels as separate phonemes for g2p training/forced alignment purposes
     """
+
     def __init__(self):
         # https://github.com/menelik3/cmudict-ipa/issues/2
         # https://github.com/danmysak/multilingual-ipa-data/blob/main/cmudict/collection/data/phonemes
@@ -113,7 +114,7 @@ class ARPAbetConvertor:
             "z": "z",
             "<eps>": "<eps>",
         }
-        self._ipa2xsampa_stress = {"ˈ": "\"", "ˌ": "%"}
+        self._ipa2xsampa_stress = {"ˈ": '"', "ˌ": "%"}
 
     def arpa2ipa(self, arpa_phonemes: List[str]) -> List[str]:
         ipa_phonemes = []
@@ -129,7 +130,9 @@ class ARPAbetConvertor:
 
             # if ipa phoneme was not found, look up for phoneme without stress (should be there)
             if ipa_x is None:
-                assert x in self._arpa2ipa, "Cant find [{}] in ARPAbet to IPA mapping".format(x)
+                assert (
+                    x in self._arpa2ipa
+                ), "Cant find [{}] in ARPAbet to IPA mapping".format(x)
                 ipa_x = self._arpa2ipa[x]
 
             # add ipa version of stress
@@ -159,9 +162,13 @@ class ARPAbetConvertor:
                 x = x[:-1]
 
             # convert ipa to xsampa
-            assert x in self._ipa2xsampa, "Cant find [{}] in IPA to X-SAMPA mapping".format(x)
+            assert (
+                x in self._ipa2xsampa
+            ), "Cant find [{}] in IPA to X-SAMPA mapping".format(x)
             xsampa_x = xsampa_stress + self._ipa2xsampa[x] + xsampa_prolongation
-            assert is_ascii(xsampa_x), "X-SAMPA phoneme is non-ASCII: {}".format(xsampa_x)
+            assert self.is_ascii(xsampa_x), "X-SAMPA phoneme is non-ASCII: {}".format(
+                xsampa_x
+            )
             xsampa_phonemes.append(xsampa_x)
 
         return xsampa_phonemes

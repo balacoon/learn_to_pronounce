@@ -4,27 +4,49 @@ Copyright 2022 Balacoon
 Recipe to build an addon for pronunciation_generation.
 """
 
-import os
 import argparse
+import logging
+import os
 
-from learn_to_pronounce.resources import get_provider
 from learn_to_pronounce.addon.addon_manager import AddonManager
 from learn_to_pronounce.fst.fst_trainer import FSTTrainer, add_fst_arguments
+from learn_to_pronounce.resources import get_provider
 
 
 def parse_args():
-    ap = argparse.ArgumentParser(description="Learns how to pronounce words, creates artifacts for pronunciation_generation package.",
-                                 formatter_class=argparse.RawTextHelpFormatter)
-    ap.add_argument("--resources", required=True, help="Directory with pronunciation resources. Those are stored in repos that are submodules to this repo.")
-    ap.add_argument("--locale", required=True, help='Locale corresponding to resources, that will be stored in addon')
-    ap.add_argument("--work-dir", default="work_dir", help="Working directory to put intermediate artifacts to")
-    ap.add_argument("--out", help="Path to put produced artifact to. It is also stored at work_dir/addon")
-    ap.add_argument("--stage", choices=["lexicon", "spelling", "pronunciation", "all"], default="all",
-                    help="Which stage of pronunciation learning to execute:\n"
-                    "> lexicon - just pack dictionary for pronunciation look up\n"
-                    "> spelling - train small FST model to spell words\n"
-                    "> pronunciation - train FST-based pronunciation generation\n"
-                    "> all - all of the above")
+    ap = argparse.ArgumentParser(
+        description="Learns how to pronounce words, creates artifacts for pronunciation_generation package.",
+        formatter_class=argparse.RawTextHelpFormatter,
+    )
+    ap.add_argument(
+        "--resources",
+        required=True,
+        help="Directory with pronunciation resources. Those are stored in repos that are submodules to this repo.",
+    )
+    ap.add_argument(
+        "--locale",
+        required=True,
+        help="Locale corresponding to resources, that will be stored in addon",
+    )
+    ap.add_argument(
+        "--work-dir",
+        default="work_dir",
+        help="Working directory to put intermediate artifacts to",
+    )
+    ap.add_argument(
+        "--out",
+        help="Path to put produced artifact to. It is also stored at work_dir/addon",
+    )
+    ap.add_argument(
+        "--stage",
+        choices=["lexicon", "spelling", "pronunciation", "all"],
+        default="all",
+        help="Which stage of pronunciation learning to execute:\n"
+        "> lexicon - just pack dictionary for pronunciation look up\n"
+        "> spelling - train small FST model to spell words\n"
+        "> pronunciation - train FST-based pronunciation generation\n"
+        "> all - all of the above",
+    )
     add_fst_arguments(ap)
     args = ap.parse_args()
     return args

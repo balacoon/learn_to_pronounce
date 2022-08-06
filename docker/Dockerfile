@@ -54,8 +54,9 @@ else \
     echo "Installing pronunciation_generation from pip" && \
     pip install pronunciation_generation ; fi
 
-# install package itself
+# install package dependencies and package itself
 COPY ./ /opt/learn_to_pronounce
+RUN pip install -r /opt/learn_to_pronounce/requirements.txt
 RUN pip install /opt/learn_to_pronounce
 
 WORKDIR /home/

@@ -4,14 +4,15 @@ Copyright 2022 Balacoon
 trains FST - model to generation pronunciation or spelling
 """
 
-import logging
 import argparse
-
-from pronunciation_generation import PronunciationDictionary
+import logging
+import os
 from importlib.machinery import SourceFileLoader
 
-from learn_to_pronounce.resources.provider import AbstractProvider
+from pronunciation_generation import PronunciationDictionary
+
 from learn_to_pronounce.fst.fst_evaluator import FSTEvaluator
+from learn_to_pronounce.resources.provider import AbstractProvider
 
 
 def add_fst_arguments(parser: argparse.ArgumentParser):
@@ -24,9 +25,23 @@ def add_fst_arguments(parser: argparse.ArgumentParser):
         argument parser from recipe to add special arguments to
     """
     arg_group = parser.add_argument_group("fst")
-    arg_group.add_argument('--fst-order', default=8, type=int, help='Maximum N-gram order to be used in FST')
-    arg_group.add_argument('--fst-spelling-order', default=3, type=int, help='Maximum N-gram order to be used in spelling FST')
-    arg_group.add_argument('--fst-evaluate', action="store_true", help='Evaluate trained FST on test_words from resources')
+    arg_group.add_argument(
+        "--fst-order",
+        default=8,
+        type=int,
+        help="Maximum N-gram order to be used in FST",
+    )
+    arg_group.add_argument(
+        "--fst-spelling-order",
+        default=3,
+        type=int,
+        help="Maximum N-gram order to be used in spelling FST",
+    )
+    arg_group.add_argument(
+        "--fst-evaluate",
+        action="store_true",
+        help="Evaluate trained FST on test_words from resources",
+    )
 
 
 class FSTTrainer:
@@ -34,7 +49,10 @@ class FSTTrainer:
     Trains FST based on provided lexicon. Training is done with phonetisaurus.
     Can be used to train pronunciation or spelling generation.
     """
-    def __init__(self, provider: AbstractProvider, work_dir: str, args: argparse.Namespace):
+
+    def __init__(
+        self, provider: AbstractProvider, work_dir: str, args: argparse.Namespace
+    ):
         """
         constructor
 
@@ -58,11 +76,18 @@ class FSTTrainer:
         """
         with open(path, "w", encoding="utf-8") as fp:
             words = pd.get_words()
-            for word_str in words:
+            for word in words:
                 for pronunciation in word.get_pronunciations():
-                    fp.write("{}\t{}\n".format(word_str, pronunciation.to_string()))
+                    fp.write("{}\t{}\n".format(word.name(), pronunciation.to_string()))
 
-    def _train_fst(self, lexicon: PronunciationDictionary, train_data_name: str, model_name: str, ngram_order: int, **phonetisaurus_args) -> str:
+    def _train_fst(
+        self,
+        lexicon: PronunciationDictionary,
+        train_data_name: str,
+        model_name: str,
+        ngram_order: int,
+        **phonetisaurus_args
+    ) -> str:
         """
         Helper function that trains FST on the given lexicon
 
@@ -87,10 +112,16 @@ class FSTTrainer:
         """
         train_data_path = os.path.join(self._work_dir, train_data_name)
         self._dump_fst_train_data(lexicon, train_data_path)
-        phonetisaurus_train = SourceFileLoader("", "/usr/local/bin/phonetisaurus-train").load_module()
-        phonetisaurus_trainer = phonetisaurus_train.G2PModelTrainer(train_data_path, dir_prefix=self._work_dir,
-                                                                    model_prefix=model_name, ngram_order=ngram_order,
-                                                                    **phonetisaurus_args)
+        phonetisaurus_train = SourceFileLoader(
+            "", "/usr/local/bin/phonetisaurus-train"
+        ).load_module()
+        phonetisaurus_trainer = phonetisaurus_train.G2PModelTrainer(
+            train_data_path,
+            dir_prefix=self._work_dir,
+            model_prefix=model_name,
+            ngram_order=ngram_order,
+            **phonetisaurus_args
+        )
         phonetisaurus_trainer.TrainG2PModel()
         fst_path = os.path.join(self._work_dir, model_name + ".fst")
         return fst_path
@@ -99,20 +130,40 @@ class FSTTrainer:
         """
         Training pronunciation FST
         """
-        train_lexicon = self._provider.get_lexicon(words=self._provider.get_train_words())
-        phonetisaurus_args = {'seq1_del': True, 'seq2_del': True, 'seq1_max': 10, 'seq2_max': 10}
-        logging.info("Training pronunciation FST on {} words".format(train_lexicon.size()))
-        fst_path = self._train_fst(train_lexicon, train_data_name="pronunciation_training_data",
-                                   model_name="pronunciation", ngram_order=self._args.fst_order, **phonetisaurus_args)
+        train_lexicon = self._provider.get_lexicon(
+            words=self._provider.get_train_words()
+        )
+        phonetisaurus_args = {
+            "seq1_del": True,
+            "seq2_del": True,
+            "seq1_max": 10,
+            "seq2_max": 10,
+        }
+        logging.info(
+            "Training pronunciation FST on {} words".format(train_lexicon.size())
+        )
+        fst_path = self._train_fst(
+            train_lexicon,
+            train_data_name="pronunciation_training_data",
+            model_name="pronunciation",
+            ngram_order=self._args.fst_order,
+            **phonetisaurus_args
+        )
 
         if self._args.fst_evaluate:
             test_words = self._provider.get_test_words()
             if not test_words:
-                logging.warning("FST evaluation is enabled, but there is no test words in resource directory")
+                logging.warning(
+                    "FST evaluation is enabled, but there is no test words in resource directory"
+                )
             else:
                 test_lexicon = self._provider.get_lexicon(words=test_words)
                 evaluator = FSTEvaluator(fst_path)
-                logging.info("Evaluating pronunciation FST on {} words".format(test_lexicon.size()))
+                logging.info(
+                    "Evaluating pronunciation FST on {} words".format(
+                        test_lexicon.size()
+                    )
+                )
                 evaluator.evaluate(test_lexicon)
 
         return fst_path
@@ -122,7 +173,14 @@ class FSTTrainer:
         Training spelling FST
         """
         spelling_lexicon = self._provider.get_spelling_lexicon()
-        logging.info("Training spelling FST on {} words".format(spelling_lexicon.size()))
-        fst_path = self._train_fst(spelling_lexicon, train_data_name="spelling_training_data", model_name="spelling",
-                                   ngram_order=self._args.fst_spelling_order, seq2_del=True)
+        logging.info(
+            "Training spelling FST on {} words".format(spelling_lexicon.size())
+        )
+        fst_path = self._train_fst(
+            spelling_lexicon,
+            train_data_name="spelling_training_data",
+            model_name="spelling",
+            ngram_order=self._args.fst_spelling_order,
+            seq2_del=True,
+        )
         return fst_path

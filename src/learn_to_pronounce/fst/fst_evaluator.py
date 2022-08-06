@@ -5,11 +5,10 @@ Evaluates trained FST model on withhold lexicon
 """
 
 import logging
-from typing import List, Union
+from typing import List, Tuple
 
 import edlib
-
-from pronunciation_generation import Word, Pronunciation, PronunciationDictionary, FSTPronunciationGenerator
+from pronunciation_generation import FSTPronunciationGenerator, Pronunciation, PronunciationDictionary, Word
 
 
 class PronunciationComparator:
@@ -18,6 +17,7 @@ class PronunciationComparator:
     Follows evalution strategy from Phonetisaurus: compares top-1 generated pronunciation with
     all the pronunciations for the given word, selects a pair which is most similar.
     """
+
     def __init__(self, with_stress=True):
         """
         constructor of pronunciation comporator
@@ -39,7 +39,11 @@ class PronunciationComparator:
         self._total_phonemes = 0
         self._incorrect_phonemes = 0
 
-    def compare(self, reference_pronunciations: List[Pronunciation], hypothesis_pronunciation: Pronunciation):
+    def compare(
+        self,
+        reference_pronunciations: List[Pronunciation],
+        hypothesis_pronunciation: Pronunciation,
+    ):
         """
         Compares pronunciations, updates metrics
 
@@ -52,12 +56,18 @@ class PronunciationComparator:
         """
         self._total_words += 1
         self._total_phonemes += reference_pronunciations[0].size()
-        min_distance = float('inf')
+        min_distance = float("inf")
         min_distance_index = -1
         for i, reference_pronunciation in enumerate(reference_pronunciations):
-            reference_phonemes = reference_pronunciation.to_string(with_stress=self._with_stress).split()
-            hypothesis_phonemes = hypothesis_pronunciation.to_string(with_stress=self._with_stress).split()
-            distance = edlib.align(hypothesis_phonemes, reference_phonemes)['editDistance']
+            reference_phonemes = reference_pronunciation.to_string(
+                with_stress=self._with_stress
+            ).split()
+            hypothesis_phonemes = hypothesis_pronunciation.to_string(
+                with_stress=self._with_stress
+            ).split()
+            distance = edlib.align(hypothesis_phonemes, reference_phonemes)[
+                "editDistance"
+            ]
             if distance < min_distance:
                 min_distance = distance
                 min_distance_index = i
@@ -70,7 +80,7 @@ class PronunciationComparator:
         self._incorrect_phonemes += min_distance
         self._total_phonemes += reference_pronunciations[min_distance_index].size()
 
-    def get_metrics(self) -> Union[float, float]:
+    def get_metrics(self) -> Tuple[float, float]:
         """
         returns WER and PER in percents given all compared pronunciations
 
@@ -81,7 +91,9 @@ class PronunciationComparator:
         per: float
             phoneme error rate in percent
         """
-        wer = 100.0 * (self._total_words - self._correct_words) / float(self._total_words)
+        wer = (
+            100.0 * (self._total_words - self._correct_words) / float(self._total_words)
+        )
         per = 100.0 * self._incorrect_phonemes / float(self._total_phonemes)
         return wer, per
 
@@ -91,6 +103,7 @@ class FSTEvaluator:
     Evaluates FST given lexicon.
     Prints WER and PER, computed from comparing ground truth pronunciations and generated one
     """
+
     def __init__(self, fst_path: str):
         """
         constructor of fst evaluator
@@ -121,7 +134,11 @@ class FSTEvaluator:
             comparator.compare(ref_pron, hyp_pron)
             comparator_wo_stress.compare(ref_pron, hyp_pron)
 
-        logging.info('Performance taking into account stress marks:')
-        logging.info('WER,%: {:.2f}; PER,%: {:.2f}'.format(*comparator.get_metrics()))
-        logging.info('Performance WITHOUT taking into account stress marks (stressless):')
-        logging.info('WER,%: {:.2f}; PER,%: {:.2f}'.format(*comparator_wo_stress.get_metrics()))
+        logging.info("Performance taking into account stress marks:")
+        wer, per = comparator.get_metrics()
+        logging.info("WER,%: {:.2f}; PER,%: {:.2f}".format(wer, per))
+        logging.info(
+            "Performance WITHOUT taking into account stress marks (stressless):"
+        )
+        wer, per = comparator_wo_stress.get_metrics()
+        logging.info("WER,%: {:.2f}; PER,%: {:.2f}".format(wer, per))

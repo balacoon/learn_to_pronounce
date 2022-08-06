@@ -7,8 +7,10 @@ pronunciation resources.
 """
 
 import logging
+import os
 from abc import ABC, abstractmethod
-from typing import List, Union
+from collections.abc import Iterable
+from typing import List, Optional, Tuple
 
 from pronunciation_generation import PronunciationDictionary
 
@@ -100,7 +102,7 @@ class AbstractProvider(ABC):
         pass
 
     @abstractmethod
-    def get_test_words(self) -> List[str]:
+    def get_test_words(self) -> Optional[List[str]]:
         """
         Getter for list of words from lexicon (:func:`.get_lexicon`) that should be used for evaluation of
         pronunciation generation. If not specified in resources directory - no evaluation will be carried out.
@@ -122,9 +124,13 @@ class DefaultProvider(AbstractProvider):
     """
 
     PHONEMES_FILE_NAME = "phonemes"  #: name of the file with list of phonemes
-    GRAPHEMES_FILE_NAME = "graphemes"  #: name of the file with list of graphemes (letters)
+    GRAPHEMES_FILE_NAME = (
+        "graphemes"  #: name of the file with list of graphemes (letters)
+    )
     LEXICON_FILE_NAME = "lexicon"  #: name of the file with pronunciation dictionary
-    SPELLING_LEXICON_FILE_NAME = "spelling_lexicon"  #: name of the file with spelling dictionary
+    SPELLING_LEXICON_FILE_NAME = (
+        "spelling_lexicon"  #: name of the file with spelling dictionary
+    )
     TRAIN_WORDS = "train_words"  #: name of the file with words to be used for training of pronunciation generation
     TEST_WORDS = "test_words"  #: name of the file with words for evaluation of pronunciation generation
 
@@ -141,7 +147,7 @@ class DefaultProvider(AbstractProvider):
             return lines
 
     @staticmethod
-    def parse_lexicon_line(line: str) -> Union[str, str, str]:
+    def parse_lexicon_line(line: str) -> Tuple[str, str, str]:
         """
         Helper function that parses lexicon line
 
@@ -167,10 +173,11 @@ class DefaultProvider(AbstractProvider):
             word, tag, pronunciation = parts
         else:
             raise RuntimeError("Failed to parse lexicon line [{}]".format(line))
-        phonemes = pronunciation.split()
-        return word, tag, phonemes
+        return word, tag, pronunciation
 
-    def parse_lexicon(self, path: str, words: List[str] = None) -> PronunciationDictionary:
+    def parse_lexicon(
+        self, path: str, words: Iterable[str] = None
+    ) -> PronunciationDictionary:
         """
         Helper function that parses lexicon from a file.
         Expected format is:
@@ -183,7 +190,7 @@ class DefaultProvider(AbstractProvider):
         ----------
         path: str
             path to parse lexicon from
-        words: List[str]
+        words: Iterable[str]
             list of words to include into returned PronunciationDictionary or None to include all.
 
         Returns
@@ -216,7 +223,11 @@ class DefaultProvider(AbstractProvider):
         """
         path = os.path.join(self._resources_dir, self.LEXICON_FILE_NAME)
         if not os.path.isfile(path):
-            raise FileNotFoundError("{} is not found in {}".format(self.LEXICON_FILE_NAME, self._resources_dir))
+            raise FileNotFoundError(
+                "{} is not found in {}".format(
+                    self.LEXICON_FILE_NAME, self._resources_dir
+                )
+            )
         return self.parse_lexicon(path, words=words)
 
     def get_spelling_lexicon(self) -> PronunciationDictionary:
@@ -225,7 +236,11 @@ class DefaultProvider(AbstractProvider):
         """
         path = os.path.join(self._resources_dir, self.SPELLING_LEXICON_FILE_NAME)
         if not os.path.isfile(path):
-            raise FileNotFoundError("{} is not found in {}".format(self.SPELLING_LEXICON_FILE_NAME, self._resources_dir))
+            raise FileNotFoundError(
+                "{} is not found in {}".format(
+                    self.SPELLING_LEXICON_FILE_NAME, self._resources_dir
+                )
+            )
         return self.parse_lexicon(path)
 
     def get_phonemes(self) -> List[str]:
@@ -235,7 +250,9 @@ class DefaultProvider(AbstractProvider):
         path = os.path.join(self._resources_dir, self.PHONEMES_FILE_NAME)
         if os.path.isfile(path):
             return self._read_lines(path)
-        # file with phonemes is not available, needs to read lexicon and find all unique phonemes
+        logging.info(
+            "File with phonemes is not available, deriving unique phonemes from lexicon"
+        )
         phonemes = set()
         pd = self.get_lexicon()
         words = pd.get_words()
@@ -256,7 +273,9 @@ class DefaultProvider(AbstractProvider):
         path = os.path.join(self._resources_dir, self.GRAPHEMES_FILE_NAME)
         if os.path.isfile(path):
             return self._read_lines(path)
-        # file with graphemes is not available, needs to read lexicon and find all unique letters in words
+        logging.info(
+            "File with graphemes is not available, deriving unique phonemes from lexicon"
+        )
         letters = set()
         pd = self.get_lexicon()
         words = pd.get_words()
@@ -272,15 +291,19 @@ class DefaultProvider(AbstractProvider):
         path = os.path.join(self._resources_dir, self.TRAIN_WORDS)
         if os.path.isfile(path):
             return self._read_lines(path)
-        # in case there is no pre-defined set of words for training, just use all the words in lexicon
+        logging.info(
+            "File with words for pronunciation training is not available, using whole lexicon"
+        )
         return [x.name() for x in self.get_lexicon().get_words()]
 
-    def get_test_words(self) -> List[str]:
+    def get_test_words(self) -> Optional[List[str]]:
         """
         :func:`AbstractProvider.get_test_words`
         """
         path = os.path.join(self._resources_dir, self.TEST_WORDS)
         if os.path.isfile(path):
             return self._read_lines(path)
-        # in case there is no pre-defined set of words for eval, just return None, to disable evaluation
+        logging.info(
+            "File with words for pronunciation generation evaluation is not available"
+        )
         return None
