@@ -3,6 +3,8 @@
 FROM python:3.8-slim
 
 ARG build_pg
+ARG user_id
+ARG group_id
 
 ENV DEBIAN_FRONTEND="noninteractive" TZ="Europe/Berlin"
 
@@ -58,5 +60,10 @@ else \
 COPY ./ /opt/learn_to_pronounce
 RUN pip install -r /opt/learn_to_pronounce/requirements.txt
 RUN pip install /opt/learn_to_pronounce
+
+# create non-root user
+RUN addgroup --gid $group_id user
+RUN adduser --disabled-password --gecos '' --uid $user_id --gid $group_id user
+USER user
 
 WORKDIR /home/

@@ -44,5 +44,6 @@ done
 
 DOCKER_BUILDKIT=1 docker build --ssh default $no_cache_opt \
 	-t $docker_image_name:$tag $build_pg_opt \
+	--build-arg user_id=$(id -u) --build-arg group_id=$(id -g) \
 	-f docker/Dockerfile .
 
