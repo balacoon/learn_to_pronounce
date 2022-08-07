@@ -9,8 +9,7 @@ pronunciation resources.
 import logging
 import os
 from abc import ABC, abstractmethod
-from collections.abc import Iterable
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Iterable
 
 from pronunciation_generation import PronunciationDictionary
 
