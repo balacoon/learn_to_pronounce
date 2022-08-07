@@ -1,3 +1,5 @@
 .idea
 build
+work_dir
+src/learn_to_pronounce.egg-info/
 **/__pycache__/
