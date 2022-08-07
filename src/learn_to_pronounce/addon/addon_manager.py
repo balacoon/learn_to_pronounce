@@ -59,7 +59,7 @@ class AddonManager(object):
         Helper function that loads addon as a dictionary
         """
         with open(self._path, "rb") as fp:
-            addon_dict = msgpack.load(fp)
+            addon_dict = msgpack.load(fp)[0]
         return addon_dict
 
     def _save_addon_dict(self, addon_dict: Dict[str, Any]):
@@ -67,7 +67,7 @@ class AddonManager(object):
         Helper function that stores dictionary as an addon
         """
         with open(self._path, "wb") as fp:
-            msgpack.dump(addon_dict, fp)
+            msgpack.dump([addon_dict], fp)
 
     def save(self, path: str):
         """
