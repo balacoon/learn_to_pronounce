@@ -181,6 +181,6 @@ class FSTTrainer:
             train_data_name="spelling_training_data",
             model_name="spelling",
             ngram_order=self._args.fst_spelling_order,
-            seq2_del=True,
+            seq2_del=True, seq2_max=10,
         )
         return fst_path
