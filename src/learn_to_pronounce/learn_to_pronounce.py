@@ -65,8 +65,13 @@ def main():
         pd = provider.get_lexicon()
         graphemes = provider.get_graphemes()
         phonemes = provider.get_phonemes()
-        pd.validate(graphemes, phonemes)
+        pd.validate(set(graphemes), set(phonemes))
         addon_manager.add_lexicon(pd, graphemes, phonemes)
+        logging.info(
+            "Packed lexicon with {} words. Consists of {} graphemes and {} phonemes".format(
+                pd.size(), len(graphemes), len(phonemes)
+            )
+        )
 
     if args.stage == "spelling" or args.stage == "all":
         fst_trainer = FSTTrainer(provider, args.work_dir, args)
@@ -78,7 +83,7 @@ def main():
         fst_trainer = FSTTrainer(provider, args.work_dir, args)
         logging.info("Training FST-based pronunciation model")
         path = fst_trainer.train_pronunciation()
-        addon_manager.add_spelling_fst(path)
+        addon_manager.add_pronunciation_fst(path)
 
     if args.out:
         addon_manager.save(args.out)
