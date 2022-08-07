@@ -22,6 +22,8 @@ setup(
     entry_points="""\
      [console_scripts]
      learn_to_pronounce = learn_to_pronounce.learn_to_pronounce:main
+     demo_fst = learn_to_pronounce.fst.demo_fst:main
+     demo_pronounce = learn_to_pronounce.demo_pronounce:main
     """
 )
 
