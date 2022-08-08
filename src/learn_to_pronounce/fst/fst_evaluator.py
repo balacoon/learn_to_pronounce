@@ -4,6 +4,7 @@ Copyright 2022 Balacoon
 Evaluates trained FST model on withhold lexicon
 """
 
+import tqdm
 import logging
 from typing import List, Tuple
 
@@ -126,7 +127,7 @@ class FSTEvaluator:
         """
         comparator = PronunciationComparator()
         comparator_wo_stress = PronunciationComparator(with_stress=False)
-        for ref_word in lexicon.get_words():
+        for ref_word in tqdm.tqdm(lexicon.get_words()):
             hyp_word = Word(ref_word.name())
             self._fst.phoneticize(hyp_word)
             ref_pron = ref_word.get_pronunciations()
