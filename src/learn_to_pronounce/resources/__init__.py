@@ -1,8 +1,34 @@
 """
-Copyright 2022 Balacoon
+Resources
+=========
+Provides interface to resource directory with pronunciation lexicon:
+https://github.com/balacoon/en_us_pronunciation/tree/main/cmudict
+learn_to_pronounce interacts with data via resource provider.
 
-basic functionality of resource provider, when used in
-pronunciation learning recipe.
+Abstract resource provider defines methods which are used during
+learning pronunciation:
+
+.. autosummary::
+    :toctree: generated/
+    :nosignatures:
+    :template: class.rst
+
+    AbstractProvider
+
+Basic implementation of resource provider:
+
+.. autosummary::
+    :toctree: generated/
+    :nosignatures:
+    :template: class.rst
+
+    DefaultProvider
+
+If custom resource directory is used, one can implement their own provider
+and put it to resource directory. if custom_provider.py with CustomProvider
+class is available in resource directory, it will be used to access the data.
+Check https://github.com/balacoon/learn_to_pronounce/blob/main/tests/dummy_data/custom_provider_data/custom_provider.py
+for reference.
 """
 
 import importlib.util
@@ -20,7 +46,7 @@ def _get_module_from_file(
     Helper function to load python model from a file
 
     Parameters
-    ---------
+    ----------
     path: str
         path to a source file to load module form
     module_name: str

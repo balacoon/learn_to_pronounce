@@ -147,6 +147,9 @@ class FSTTrainer:
         return fst_path
 
     def evaluate_pronunciation(self):
+        """
+        Evaluates trained model using test_words from resources. Prints results in terms of WER/PER to console.
+        """
         fst_path = os.path.join(self._work_dir, "pronunciation.fst")
         if not os.path.isfile(fst_path):
             raise FileNotFoundError("Can't run evalution, missing [{}]. Run training first.".format(fst_path))

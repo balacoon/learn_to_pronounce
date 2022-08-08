@@ -3,3 +3,4 @@ build
 work_dir
 src/learn_to_pronounce.egg-info/
 **/__pycache__/
+docs/source/generated/
