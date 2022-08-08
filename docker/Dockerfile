@@ -66,4 +66,7 @@ RUN addgroup --gid $group_id user
 RUN adduser --disabled-password --gecos '' --uid $user_id --gid $group_id user
 USER user
 
+# set unsual library path
+ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/lib/"
+
 WORKDIR /home/
