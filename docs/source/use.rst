@@ -42,7 +42,7 @@ In order to build pronunciation addon:
    bash docker/run.sh
    # check that everything works on a toy lexicon.
    learn_to_pronounce --locale en_us --work-dir toy_work_dir \
-       --resources resources/en_us_pronunciation/toy/ --fst-order 3
+       --resources resources/en_us_pronunciation/toy/
    # if everything finishes without errors, time build complete addon.
    # check arguments of learn_to_pronounce to learn more on usage.
    learn_to_pronounce --locale en_us --out en_us_pronunciation.addon \
