@@ -37,11 +37,6 @@ def add_fst_arguments(parser: argparse.ArgumentParser):
         type=int,
         help="Maximum N-gram order to be used in spelling FST",
     )
-    arg_group.add_argument(
-        "--fst-evaluate",
-        action="store_true",
-        help="Evaluate trained FST on test_words from resources",
-    )
 
 
 class FSTTrainer:
@@ -76,7 +71,8 @@ class FSTTrainer:
         """
         with open(path, "w", encoding="utf-8") as fp:
             words = pd.get_words()
-            for word in words:
+            # order of words influences result!
+            for word in sorted(words, key=lambda x: x.name()):
                 for pronunciation in word.get_pronunciations():
                     fp.write("{}\t{}\n".format(word.name(), pronunciation.to_string()))
 
@@ -126,19 +122,18 @@ class FSTTrainer:
         fst_path = os.path.join(self._work_dir, model_name + ".fst")
         return fst_path
 
-    def train_pronunciation(self):
+    def train_pronunciation(self) -> str:
         """
         Training pronunciation FST
+
+        Returns
+        -------
+        fst_path: str
+            path to trained pronunciation model
         """
         train_lexicon = self._provider.get_lexicon(
             words=self._provider.get_train_words()
         )
-        phonetisaurus_args = {
-            "seq1_del": True,
-            "seq2_del": True,
-            "seq1_max": 10,
-            "seq2_max": 10,
-        }
         logging.info(
             "Training pronunciation FST on {} words".format(train_lexicon.size())
         )
@@ -147,30 +142,37 @@ class FSTTrainer:
             train_data_name="pronunciation_training_data",
             model_name="pronunciation",
             ngram_order=self._args.fst_order,
-            **phonetisaurus_args
+            seq2_del=True,
         )
-
-        if self._args.fst_evaluate:
-            test_words = self._provider.get_test_words()
-            if not test_words:
-                logging.warning(
-                    "FST evaluation is enabled, but there is no test words in resource directory"
-                )
-            else:
-                test_lexicon = self._provider.get_lexicon(words=test_words)
-                evaluator = FSTEvaluator(fst_path)
-                logging.info(
-                    "Evaluating pronunciation FST on {} words".format(
-                        test_lexicon.size()
-                    )
-                )
-                evaluator.evaluate(test_lexicon)
-
         return fst_path
 
-    def train_spelling(self):
+    def evaluate_pronunciation(self):
+        fst_path = os.path.join(self._work_dir, "pronunciation.fst")
+        if not os.path.isfile(fst_path):
+            raise FileNotFoundError("Can't run evalution, missing [{}]. Run training first.".format(fst_path))
+        test_words = self._provider.get_test_words()
+        if not test_words:
+            logging.warning(
+                "FST evaluation is enabled, but there is no test words in resource directory"
+            )
+            return
+        test_lexicon = self._provider.get_lexicon(words=test_words)
+        logging.info(
+            "Evaluating pronunciation FST on {} words".format(
+                test_lexicon.size()
+            )
+        )
+        evaluator = FSTEvaluator(fst_path)
+        evaluator.evaluate(test_lexicon)
+
+    def train_spelling(self) -> str:
         """
         Training spelling FST
+
+        Returns
+        -------
+        fst_path: str
+            path to trained spelling model
         """
         spelling_lexicon = self._provider.get_spelling_lexicon()
         logging.info(
@@ -181,6 +183,6 @@ class FSTTrainer:
             train_data_name="spelling_training_data",
             model_name="spelling",
             ngram_order=self._args.fst_spelling_order,
-            seq2_del=True, seq2_max=10,
+            seq2_del=True,
         )
         return fst_path

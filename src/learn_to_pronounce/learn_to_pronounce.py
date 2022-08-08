@@ -39,12 +39,13 @@ def parse_args():
     )
     ap.add_argument(
         "--stage",
-        choices=["lexicon", "spelling", "pronunciation", "all"],
+        choices=["lexicon", "spelling", "pronunciation", "evaluation", "all"],
         default="all",
         help="Which stage of pronunciation learning to execute:\n"
         "> lexicon - just pack dictionary for pronunciation look up\n"
         "> spelling - train small FST model to spell words\n"
         "> pronunciation - train FST-based pronunciation generation\n"
+        "> evaluation - evaluate FST-based pronunciation generation\n"
         "> all - all of the above",
     )
     add_fst_arguments(ap)
@@ -84,6 +85,11 @@ def main():
         logging.info("Training FST-based pronunciation model")
         path = fst_trainer.train_pronunciation()
         addon_manager.add_pronunciation_fst(path)
+
+    if args.stage == "evaluation" or args.stage == "all":
+        fst_trainer = FSTTrainer(provider, args.work_dir, args)
+        logging.info("Evaluating FST-based pronunciation model")
+        fst_trainer.evaluate_pronunciation()
 
     if args.out:
         addon_manager.save(args.out)
