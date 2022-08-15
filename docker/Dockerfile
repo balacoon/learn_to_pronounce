@@ -54,7 +54,7 @@ RUN --mount=type=ssh if [ "$build_pg" = "true" ]; then \
     pip install ./pronunciation_generation ; \
 else \
     echo "Installing pronunciation_generation from pip" && \
-    pip install pronunciation_generation ; fi
+    pip install pronunciation-generation ; fi
 
 # install package dependencies and package itself
 COPY ./ /opt/learn_to_pronounce
