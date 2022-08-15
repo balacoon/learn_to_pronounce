@@ -3,6 +3,7 @@
 import os
 import msgpack
 import tempfile
+import pywrapfst as fst
 
 from pronunciation_generation import PronunciationDictionary
 from pronunciation_generation import PronunciationManager as pm
@@ -40,14 +41,17 @@ def test_addon_manager():
         assert field_str in addon
         assert len(addon[field_str]) == 0
 
-    am.add_pronunciation_fst(addon_path)
+    fst_path = os.path.join(temp_dir.name, "dummy.fst")
+    dummy_fst = fst.VectorFst()
+    dummy_fst.write(fst_path)
+    am.add_pronunciation_fst(fst_path)
     addon = _load_addon(addon_path)
     pron_fst_field = pm.addon_field_to_string(pm.AddonFields.FST_PRONUNCIATION_GENERATOR)
     spel_fst_field = pm.addon_field_to_string(pm.AddonFields.FST_SPELLING_GENERATOR)
     assert pron_fst_field in addon
     assert spel_fst_field not in addon
 
-    am.add_spelling_fst(addon_path)
+    am.add_spelling_fst(fst_path)
     addon = _load_addon(addon_path)
     assert pron_fst_field in addon
     assert spel_fst_field in addon

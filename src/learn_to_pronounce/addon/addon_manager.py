@@ -9,6 +9,7 @@ import shutil
 from typing import Any, Dict, List
 
 import msgpack
+import pywrapfst as fst
 from pronunciation_generation import PronunciationDictionary
 from pronunciation_generation import PronunciationManager as pm
 
@@ -113,9 +114,8 @@ class AddonManager(object):
             path to FST model to load and add to addon
         """
         addon_dict = self._load_addon_dict()
-        with open(fst_path, "rb") as fp:
-            fst_data = fp.read()
-        addon_dict[key] = fst_data
+        loaded_fst = fst.Fst.read(fst_path)
+        addon_dict[key] = loaded_fst.write_to_string()
         self._save_addon_dict(addon_dict)
 
     def add_pronunciation_fst(self, fst_path: str):
