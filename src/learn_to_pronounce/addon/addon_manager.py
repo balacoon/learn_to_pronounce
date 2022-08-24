@@ -40,14 +40,14 @@ class AddonManager(object):
         if not os.path.isfile(self._path):
             # there is no addon in work dir, create a dummy one
             addon_dict = {
-                pm.addon_field_to_string(pm.AddonFields.ID): pm.addon_identifier(),
-                pm.addon_field_to_string(pm.AddonFields.LOCALE): locale,
+                pm.AddonFields.ID_KEY: pm.AddonFields.ID_VALUE,
+                pm.AddonFields.LOCALE: locale,
             }
             self._save_addon_dict(addon_dict)
         else:
             # there is already addon file, verify that locale is the same as current one
             addon_dict = self._load_addon_dict()
-            addon_locale = addon_dict[pm.addon_field_to_string(pm.AddonFields.LOCALE)]
+            addon_locale = addon_dict[pm.AddonFields.LOCALE]
             if addon_locale != locale:
                 raise RuntimeError(
                     "Addon file exists and locale inside [{}] doesn't match one specified [{}].".format(
@@ -97,9 +97,9 @@ class AddonManager(object):
             list of valid phonemes
         """
         addon_dict = self._load_addon_dict()
-        addon_dict[pm.addon_field_to_string(pm.AddonFields.LEXICON)] = pd.serialize()
-        addon_dict[pm.addon_field_to_string(pm.AddonFields.GRAPHEMES)] = graphemes
-        addon_dict[pm.addon_field_to_string(pm.AddonFields.PHONEMES)] = phonemes
+        addon_dict[pm.AddonFields.LEXICON] = pd.serialize()
+        addon_dict[pm.AddonFields.GRAPHEMES] = graphemes
+        addon_dict[pm.AddonFields.PHONEMES] = phonemes
         self._save_addon_dict(addon_dict)
 
     def _add_fst(self, key: str, fst_path: str):
@@ -128,7 +128,7 @@ class AddonManager(object):
             path to FST model
         """
         self._add_fst(
-            pm.addon_field_to_string(pm.AddonFields.FST_PRONUNCIATION_GENERATOR),
+            pm.AddonFields.FST_PRONUNCIATION_GENERATOR,
             fst_path,
         )
 
@@ -142,5 +142,5 @@ class AddonManager(object):
             path to FST model
         """
         self._add_fst(
-            pm.addon_field_to_string(pm.AddonFields.FST_SPELLING_GENERATOR), fst_path
+            pm.AddonFields.FST_SPELLING_GENERATOR, fst_path
         )
