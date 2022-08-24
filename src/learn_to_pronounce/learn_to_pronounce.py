@@ -35,7 +35,7 @@ def parse_args():
     )
     ap.add_argument(
         "--out",
-        help="Path to put produced artifact to. It is also stored at work_dir/addon",
+        help="Path to put produced artifact to. It is also stored at work_dir/pronunciation.addon",
     )
     ap.add_argument(
         "--stage",
