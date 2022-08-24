@@ -133,7 +133,7 @@ class DefaultProvider(AbstractProvider):
     TRAIN_WORDS = "train_words"  #: name of the file with words to be used for training of pronunciation generation
     TEST_WORDS = "test_words"  #: name of the file with words for evaluation of pronunciation generation
 
-    def __init__(self, resources_dir, encoding="utf-8"):
+    def __init__(self, resources_dir: str, encoding: str = "utf-8"):
         super().__init__(resources_dir)
         self._encoding = encoding
 
