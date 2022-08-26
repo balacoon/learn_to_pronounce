@@ -7,7 +7,7 @@ Interactive pronunciation generation with created addon
 import logging
 import argparse
 
-from pronunciation_generation import PronunciationManager, Word
+from pronunciation_generation import PronunciationManager
 
 
 def parse_args():
@@ -33,13 +33,13 @@ def main():
     logging.basicConfig(level=logging.INFO)
     args = parse_args()
 
-    pronunciation_manager = PronunciationManager(args.addon, args.locale)
+    pm = PronunciationManager(args.addon, args.locale)
     while True:
         word_str = input("Enter word: ")
         if not word_str:
             logging.info("No pronunciation for empty string")
-        word = Word(word_str)
-        word.set_to_spell(args.spelling)
-        pronunciation_manager.add_pronunciation(word)
-        pronunciation = word.get_pronunciation().to_string()
-        logging.info(pronunciation)
+            continue
+        if args.spelling:
+            logging.info(pm.get_spelling(word_str))
+        else:
+            logging.info(pm.get_pronunciation(word_str))
