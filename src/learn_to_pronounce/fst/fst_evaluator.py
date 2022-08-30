@@ -9,7 +9,7 @@ import logging
 from typing import List, Tuple
 
 import edlib
-from pronunciation_generation import FSTPronunciationGenerator, Pronunciation, PronunciationDictionary, Word
+from balacoon_pronunciation_generation import FSTPronunciationGenerator, Pronunciation, PronunciationDictionary, Word
 
 
 class PronunciationComparator:

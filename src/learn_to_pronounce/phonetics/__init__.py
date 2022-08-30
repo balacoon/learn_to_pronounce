@@ -3,7 +3,7 @@ Phonetics
 =========
 Contains some general notes on phonetics. For example
 conversion between phonemesets. In the future, it should be moved
-to ``pronunciation_generation``.
+to ``balacoon_pronunciation_generation``.
 
 .. autosummary::
     :toctree: generated/

@@ -10,14 +10,14 @@ from typing import Any, Dict, List
 
 import msgpack
 import pywrapfst as fst
-from pronunciation_generation import PronunciationDictionary
-from pronunciation_generation import PronunciationManager as pm
+from balacoon_pronunciation_generation import PronunciationDictionary
+from balacoon_pronunciation_generation import PronunciationManager as pm
 
 
 class AddonManager(object):
     """
     Manages addon creation, specifically adds all the necessary fields and artifacts.
-    Addon later can be used with pronunciation_generation package.
+    Addon later can be used with balacoon_pronunciation_generation package.
     The work-flow - is that at each step of pronunciation learning recipe,
     addon is loaded, new artifact is added and addon is saved. In that way, one
     can restart addon building from any step.

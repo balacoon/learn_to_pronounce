@@ -1,7 +1,7 @@
 """
 Copyright 2022 Balacoon
 
-Recipe to build an addon for pronunciation_generation.
+Recipe to build an addon for balacoon_pronunciation_generation.
 """
 
 import argparse
@@ -15,7 +15,7 @@ from learn_to_pronounce.resources import get_provider
 
 def parse_args():
     ap = argparse.ArgumentParser(
-        description="Learns how to pronounce words, creates artifacts for pronunciation_generation package.",
+        description="Learns how to pronounce words, creates artifacts for balacoon_pronunciation_generation package.",
         formatter_class=argparse.RawTextHelpFormatter,
     )
     ap.add_argument(

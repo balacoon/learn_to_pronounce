@@ -7,7 +7,7 @@ Interactive pronunciation generation with created addon
 import logging
 import argparse
 
-from pronunciation_generation import PronunciationManager
+from balacoon_pronunciation_generation import PronunciationManager
 
 
 def parse_args():

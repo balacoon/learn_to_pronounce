@@ -2,7 +2,7 @@
 Addon
 =====
 Abstracts read/write to addon with appropriate fields.
-Expected fields are obtained from ``pronunciation_generation``.
+Expected fields are obtained from ``balacoon_pronunciation_generation``.
 
 .. autosummary::
     :toctree: generated/

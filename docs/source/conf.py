@@ -25,7 +25,7 @@ autodoc_default_options = {"inherited-members": False}
 
 exclude_patterns = []
 
-autodoc_mock_imports = ["pronunciation_generation", "tqdm"]
+autodoc_mock_imports = ["balacoon_pronunciation_generation", "tqdm"]
 
 
 # -- Options for HTML output -------------------------------------------------

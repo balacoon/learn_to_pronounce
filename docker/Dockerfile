@@ -48,13 +48,13 @@ RUN cd /opt/phonetisaurus && \
 # install pronunciation_generation package,
 # which utilizes pronunciation addons
 RUN --mount=type=ssh if [ "$build_pg" = "true" ]; then \
-    echo "Building pronunciation_generation from sources" && \
+    echo "Building balacoon_pronunciation_generation from sources" && \
     cd /opt/ && \
-    git clone git@github.com:balacoon/pronunciation_generation && \
-    pip install ./pronunciation_generation ; \
+    git clone git@github.com:balacoon/balacoon_pronunciation_generation && \
+    pip install ./balacoon_pronunciation_generation ; \
 else \
-    echo "Installing pronunciation_generation from pip" && \
-    pip install pronunciation-generation ; fi
+    echo "Installing balacoon_pronunciation_generation from pip" && \
+    pip install balacoon-pronunciation-generation ; fi
 
 # install package dependencies and package itself
 COPY ./ /opt/learn_to_pronounce

@@ -11,7 +11,7 @@ import os
 from abc import ABC, abstractmethod
 from typing import List, Optional, Tuple, Iterable
 
-from pronunciation_generation import PronunciationDictionary
+from balacoon_pronunciation_generation import PronunciationDictionary
 
 
 class AbstractProvider(ABC):
@@ -69,7 +69,7 @@ class AbstractProvider(ABC):
         Returns
         -------
         pd: PronunciationDictionary
-            parsed lexicon as PronunciationDictionary (from pronunciation_generation) object
+            parsed lexicon as PronunciationDictionary (from balacoon_pronunciation_generation) object
         """
         pass
 
@@ -195,7 +195,7 @@ class DefaultProvider(AbstractProvider):
         Returns
         -------
         pd: PronunciationDictionary
-            pronunciation dictionary object from pronunciation_generation
+            pronunciation dictionary object from balacoon_pronunciation_generation
         """
         if words:
             words = set(words)

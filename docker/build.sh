@@ -11,7 +11,7 @@ bash $1 [--tag some_tag] [--build-pg] [--no-cache]
 
 Arguments:
 tag - tag of docker image, by default "latest"
-build-pg - pronunciation_generation package is built from sources (private package)
+build-pg - balacoon_pronunciation_generation package is built from sources (private package)
 no-cache - rebuild all docker layers from scratch
 EOF
 }
