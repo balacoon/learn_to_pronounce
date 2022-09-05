@@ -20,7 +20,6 @@ docker_image_name="learn_to_pronounce"
 tag="latest"
 build_pg_opt=""
 no_cache_opt=""
-ssh_keys_opt=""
 while [ "$1" != "" ]; do
     case $1 in
         --tag )
