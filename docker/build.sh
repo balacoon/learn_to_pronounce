@@ -27,7 +27,7 @@ while [ "$1" != "" ]; do
             tag=$1
         ;;
         --build-fe )
-            $build_fe_opt="--build-arg build_fe=true"
+            build_fe_opt="--build-arg build_fe=true"
         ;;
         --no-cache )
 	    no_cache_opt="--no-cache"
