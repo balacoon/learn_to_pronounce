@@ -11,7 +11,7 @@ import os
 from abc import ABC, abstractmethod
 from typing import List, Optional, Tuple, Iterable
 
-from balacoon_pronunciation_generation import PronunciationDictionary
+from balacoon_frontend import PronunciationDictionary
 
 
 class AbstractProvider(ABC):

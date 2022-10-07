@@ -8,7 +8,7 @@ for demo/testing purposes
 import logging
 import argparse
 
-from balacoon_pronunciation_generation import FSTPronunciationGenerator, Word
+from balacoon_frontend import FSTPronunciationGenerator, Word
 
 
 def parse_args():

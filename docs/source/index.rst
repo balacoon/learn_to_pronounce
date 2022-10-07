@@ -7,7 +7,7 @@ learn_to_pronounce
 ==================
 
 Package packs pronunciation lexicon and builds pronunciation generation models
-that are put into addon. Addon can be used with `balacoon_pronunciation_generation` tool
+that are put into addon. Addon can be used with `balacoon_frontend` tool
 from Balacoon.
 
 .. toctree::

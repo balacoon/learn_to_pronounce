@@ -9,7 +9,7 @@ import logging
 import os
 from importlib.machinery import SourceFileLoader
 
-from balacoon_pronunciation_generation import PronunciationDictionary
+from balacoon_frontend import PronunciationDictionary
 
 from learn_to_pronounce.fst.fst_evaluator import FSTEvaluator
 from learn_to_pronounce.resources.provider import AbstractProvider

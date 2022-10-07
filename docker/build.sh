@@ -7,18 +7,18 @@ set -x
 usage() {
     cat <<EOF
 Usage:
-bash $1 [--tag some_tag] [--build-pg] [--no-cache]
+bash $1 [--tag some_tag] [--build-fe] [--no-cache]
 
 Arguments:
 tag - tag of docker image, by default "latest"
-build-pg - balacoon_pronunciation_generation package is built from sources (private package)
+build-fe - balacoon_frontend package is built from sources (private package)
 no-cache - rebuild all docker layers from scratch
 EOF
 }
 
 docker_image_name="learn_to_pronounce"
 tag="latest"
-build_pg_opt=""
+$build_fe_opt=""
 no_cache_opt=""
 while [ "$1" != "" ]; do
     case $1 in
@@ -27,7 +27,7 @@ while [ "$1" != "" ]; do
             tag=$1
         ;;
         --build-pg )
-            build_pg_opt="--build-arg build_pg=true"
+            $build_fe_opt="--build-arg build_fe=true"
         ;;
         --no-cache )
 	    no_cache_opt="--no-cache"
@@ -42,7 +42,7 @@ while [ "$1" != "" ]; do
 done
 
 DOCKER_BUILDKIT=1 docker build --ssh default $no_cache_opt \
-	-t $docker_image_name:$tag $build_pg_opt \
+	-t $docker_image_name:$tag $build_fe_opt \
 	--build-arg user_id=$(id -u) --build-arg group_id=$(id -g) \
 	-f docker/Dockerfile .
 

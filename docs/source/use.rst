@@ -13,10 +13,10 @@ In order to build pronunciation addon:
 
 .. code-block::
 
-    # if "build-pg" is specified, pronunciation_generation
+    # if "build-fe" is specified, balacoon_frontend
     # is built from sources. You need special access for it
     # which you likely dont have.
-    bash docker/build.sh [--build-pg]
+    bash docker/build.sh [--build-fe]
 
 3. get pronunciation resources. Adjust those if needed, but don't
    forget to share changes as a contribution. In order to promote
