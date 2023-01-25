@@ -11,5 +11,3 @@ Code is organized into modules described below.
 
     fst
     addon
-    resources
-    phonetics

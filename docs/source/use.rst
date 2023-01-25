@@ -20,8 +20,11 @@ In order to build pronunciation addon:
 
 3. get pronunciation resources. Adjust those if needed, but don't
    forget to share changes as a contribution. In order to promote
-   multi-linguality, it is preferable to use international phonemesets
-   (IPA, X-SAMPA).
+   multi-linguality, a unified phoneme set is used by the balacoon.
+   You can find more information on decisions made in the `post`_.
+   If you want to build a pronunciation generation for a new lexicon,
+   you would need to perform mapping into Balacoon unified phoneme set.
+   Check info on `mapping`_ of CMUDict as an example.
 
 .. code-block::
 
@@ -60,4 +63,5 @@ In order to build pronunciation addon:
    # additionally, can spell words letter-by-letter
    demo_pronounce --addon en_us_pronunciation.addon [--spelling]
 
-Results of pronunciation generation models evaluation can be found :doc:`here <results>`
+.. _post: https://balacoon.com/blog/balacoon_phonemeset/
+.. _mapping: https://github.com/balacoon/en_us_pronunciation/blob/f683b7c4d9ad8baad048b3ff8bb9f8e900ccab43/cmudict/README.md
